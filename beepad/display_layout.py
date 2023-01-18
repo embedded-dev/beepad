@@ -2,7 +2,7 @@ import terminalio
 import displayio
 from adafruit_display_text import label
 
-from .constants import OLED_HEIGHT, OLED_WIDTH, OLED_BORDER
+from .constants import OLED_HEIGHT, OLED_WIDTH, OLED_BORDER, KEYS
 
 class DisplayLayout:
 
@@ -25,38 +25,32 @@ class DisplayLayout:
         self._key_visual.append(bg_sprite)
 
         # Draw a smaller inner rectangle, black
-        inner_bitmap = displayio.Bitmap(
-            OLED_WIDTH - OLED_BORDER * 2 - 2, OLED_HEIGHT - OLED_BORDER * 2, 1
-        )
+        inner_bitmap = displayio.Bitmap(OLED_WIDTH - OLED_BORDER * 2 - 2,
+                                        OLED_HEIGHT - OLED_BORDER * 2, 1)
         inner_palette = displayio.Palette(1)
         inner_palette[0] = 0x000000  # Black
-        inner_sprite = displayio.TileGrid(
-            inner_bitmap, pixel_shader=inner_palette, x=OLED_BORDER + 2, y=OLED_BORDER
-        )
+        inner_sprite = displayio.TileGrid(inner_bitmap, pixel_shader=inner_palette,
+                                          x=OLED_BORDER + 2, y=OLED_BORDER)
         self._key_visual.append(inner_sprite)
 
     def _draw_labels(self):
-        self._title = label.Label(
-            terminalio.FONT, text=" " * 6, color=0xFFFFFF, x=OLED_WIDTH // 2 - 10, y=10
-        )
-        self._key_visual.append(self._title)
+        self._name = label.Label(terminalio.FONT, text=" " * 6,
+                                 color=0xFFFFFF, x=OLED_WIDTH // 2 - 10, y=10)
+        self._key_visual.append(self._name)
 
         # create the text area to hold key descriptions
         self._key_labels = []
 
         for y in [20, 30, 40, 50]:
             for x in [10, 50, 90]:
-                la = label.Label(
-                    terminalio.FONT, text=" " * 6, color=0xFFFFFF, x=x, y=y
-                )
-                self._key_visual.append(la)
-                self._key_labels.append(la)
+                l = label.Label(terminalio.FONT, text=" " * 6, color=0xFFFFFF, x=x, y=y)
+                self._key_visual.append(l)
+                self._key_labels.append(l)
 
     def show_keymap(self, keymap):
-        self._title.text = keymap.title
-
-        for i, action in enumerate(keymap.actions):
-            self._key_labels[i].text = action.name
+        self._name.text = keymap.name
+        for i in range(0, KEYS):
+            self._key_labels[i].text = keymap.actions[i].name
 
     def refresh(self):
         self._display.refresh()

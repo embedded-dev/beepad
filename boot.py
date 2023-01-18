@@ -1,21 +1,37 @@
+import os
 import board
 import digitalio
 import displayio
 import storage
 import usb_cdc
-import usb_midi
 
 from time import sleep
 
-b1 = digitalio.DigitalInOut(board.KEY1)
-b1.switch_to_input(pull=digitalio.Pull.UP)
 
-if not b1.value:
-    print("dev mode!")
+key1 = digitalio.DigitalInOut(board.KEY1)
+key1.switch_to_input(pull=digitalio.Pull.UP)
+
+
+try:
+    os.stat('/develop')
+except:
+    develop = False
+else:
+    develop = True
+
+
+if develop or not key1.value:
+    print("Development mode")
     sleep(5)
 else:
+    print("Functional mode")
     displayio.release_displays()
     usb_cdc.disable()
     storage.disable_usb_drive()
 
-usb_midi.disable()
+try:
+    import usb_midi
+except ImportError:
+    pass
+else:
+    usb_midi.disable()

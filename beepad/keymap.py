@@ -1,54 +1,176 @@
+import os
 from time import sleep
+
+from .constants import KEYS
+
 
 class Action:
 
-    def __init__(self, name: str):
+    def __init__(self, name: str, color: int):
         self.name = name
+        self.color = color
 
-    def exec(self, pad: 'BeePad'):
+    def press(self, pad: 'BeePad'):
         pass
 
-class TypeAction:
+    def release(self, pad: 'BeePad'):
+        pass
 
-    def __init__(self, name: str, command: str):
-        self.name = name
-        self.command = command
 
-    def exec(self, pad: 'BeePad'):
-        pad.keyboard_layout.write(self.command)
+class NullAction(Action):
 
-class LambdaAction:
-    def __init__(self, name: str, callable):
-        self.name = name
+    def __init__(self):
+        super(NullAction, self).__init__('', None)
+
+    def press(self, pad: 'BeePad'):
+        pass
+
+    def release(self, pad: 'BeePad'):
+        pass
+
+
+class TypeAction(Action):
+
+    def __init__(self, color: int, name: str, *sequence):
+        super(TypeAction, self).__init__(name, color)
+        self._sequence = sequence
+
+    def press(self, pad: 'BeePad'):
+        # '_sequence' is an arbitrary-length list, each item is one of:
+        #     + Positive integer: key pressed (e.g. Keycode.KEYPAD_MINUS)
+        #     + Negative integer: key released (absolute value)
+        #     + Float: delay in seconds (e.g. 0.10)
+        #     + String: corresponding keys pressed & released (e.g. "git status")
+        if self._sequence and len(self._sequence) != 0:
+            for item in self._sequence:
+                if isinstance(item, int):
+                    if item >= 0:
+                        pad.keyboard.press(item)
+                    else:
+                        pad.keyboard.release(-item)
+                elif isinstance(item, float):
+                    sleep(item)
+                elif isinstance(item, str):
+                    pad.keyboard_layout.write(item)
+
+    def release(self, pad: 'BeePad'):
+        # Release any still-pressed keys, consumer codes, mouse buttons
+        #
+        # Keys and mouse buttons are individually released this way (rather
+        # than release_all()) because pad supports multi-key rollover, e.g.
+        # could have a meta key or right-mouse held down by one macro and
+        # press/release keys/buttons with others. Navigate popups, etc.
+        if self._sequence and len(self._sequence) != 0:
+            for item in self._sequence:
+                if isinstance(item, int) and item >= 0:
+                    pad.keyboard.release(item)
+        pad.consumer_control.release()
+
+
+class MouseAction(Action):
+
+    def __init__(self, color: int, name: str, x=None, y=None, buttons=None):
+        super(TypeAction, self).__init__(name, color)
+        self.x = x
+        self.y = y
+        self.buttons = buttons
+
+    def press(self, pad: 'BeePad'):
+        if self.x or self.y:
+            pad.mouse.move(self.x if self.x else 0,
+                           self.y if self.y else 0,
+                           0)
+        if self.buttons:
+            pad.mouse.click(self.buttons)
+
+    def release(self, pad: 'BeePad'):
+        if self.buttons:
+            pad.mouse.release(self.buttons)
+
+class ConsumerControlAction(Action):
+
+    def __init__(self, color: int, name: str, *codes):
+        super(TypeAction, self).__init__(name, color)
+        self._codes = codes
+
+    def press(self, pad: 'BeePad'):
+        if self._codes and len(self._codes) != 0:
+            for item in self._codes:
+                if isinstance(item, int):
+                    pad.consumer_control.release()
+                    pad.consumer_control.press(item)
+                if isinstance(item, float):
+                    sleep(item)
+
+    def release(self, pad: 'BeePad'):
+        pad.consumer_control.release()
+
+
+class LambdaAction(Action):
+
+    def __init__(self, color: int, name: str, callable):
+        super(LambdaAction, self).__init__(name, color)
         self.callable = callable
 
-    def exec(self, pad: 'BeePad'):
+    def press(self, pad: 'BeePad'):
         self.callable(pad)
 
+    def release(self, pad: 'BeePad'):
+        pass
 
-class ResetEncoderAction:
 
-    def __init__(self, name: str):
-        self.name = name
+class ResetEncoderAction(Action):
 
-    def exec(self, pad: 'BeePad'):
+    def __init__(self, color: int, name: str):
+        super(ResetEncoderAction, self).__init__(name, color)
+
+    def press(self, pad: 'BeePad'):
         sleep(5)
         pad.encoder.position = 0
 
+    def release(self, pad: 'BeePad'):
+        pass
 
 
 class Keymap:
 
-    def __init__(
-        self,
-        title: str,
-        actions: 'List[Action]',
-    ):
-        self.title = title
+    _order = 100
+
+    def __init__(self, name: str=None, order: int=None, actions: 'List[Action]'=[]):
+
+        Keymap._order += 1
+        self.name = name if name else f"? {Keymap._order} ?"
+        self.order = order if order else Keymap._order
         self.actions = actions
 
-        assert len(self.actions) <= 12
+        # Account for any missing keys or encoder button
+        for _ in range(KEYS - len(self.actions)):
+            self.actions.append(NullAction())
 
-        # Change the missing buttons
-        for _ in range(12 - len(self.actions)):
-            self.actions.append(Action("-"))
+        # Account for any missing encoder button
+        if len(self.actions) < 13:
+            self.actions.append(NullAction())
+
+    @staticmethod
+    def load_all(dir):
+
+        maps = []
+
+        try:
+            files = os.listdir(dir)
+        except OSError as err:
+            print(err)
+            return maps
+
+        for filename in files:
+            if filename.endswith('.py') and not filename.startswith('._'):
+                try:
+                    module = __import__(dir + '/' + filename[:-3])
+                    maps.append(Keymap(**module.keymap))
+                except (SyntaxError, ImportError, AttributeError, KeyError, NameError,
+                        IndexError, TypeError) as error:
+                    print(f"ERROR {error}, in f{filename}")
+                    import traceback
+                    traceback.print_exception(error, error, error.__traceback__)
+
+        return maps
