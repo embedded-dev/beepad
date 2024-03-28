@@ -1,10 +1,10 @@
 VOLUME := /Volumes/CIRCUITPY
 
-RELEASE := 8.x
-RELEASE_DATE := 20230208
+RELEASE := 9.x
+RELEASE_DATE := 20240326
 
 MODULE_LIB := ${VOLUME}/lib
-MODULE_SOURCE := ${HOME}/Projects/CircuitPython_${RELEASE}/adafruit-circuitpython-bundle-${RELEASE}-mpy-${RELEASE_DATE}/lib
+MODULE_SOURCE := ${HOME}/Projects/CircuitPython/adafruit-circuitpython-bundle-${RELEASE}-mpy-${RELEASE_DATE}/lib
 MODULES := \
     adafruit_bus_device \
     adafruit_debouncer.mpy \

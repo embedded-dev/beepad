@@ -7,7 +7,7 @@ from .colours import colorwheel
 from .display_layout import DisplayLayout
 
 class BeePad(BeePadBase):
-    
+
     def __init__(self, keymaps, assigned_colors=True, floating_colors=False) -> None:
 
         super().__init__()
@@ -23,13 +23,12 @@ class BeePad(BeePadBase):
             self._keymaps.extend(loaded)
         self._keymaps.sort(key=lambda m:m.order)
 
-
         self.layout = DisplayLayout(self.display)
         self._current_screen: int = 0
         self.layout.show_keymap(self._keymaps[0])
 
         self.show_key_colors()
-        
+
     def show_key_colors(self):
         slowdown = 10
         for i in range(PIXEL_NUM):
@@ -52,7 +51,7 @@ class BeePad(BeePadBase):
         return self._keymaps[self.current_screen]
 
     @current_screen.setter
-    def current_screen(self, val: int): 
+    def current_screen(self, val: int):
         if val != self._current_screen:
             self._current_screen = val
             self.layout.show_keymap(self._keymaps[val])
@@ -78,3 +77,4 @@ class BeePad(BeePadBase):
 
         self.show_key_colors()
         self.layout.refresh()
+

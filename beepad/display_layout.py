@@ -10,7 +10,7 @@ class DisplayLayout:
         self._display = display
 
         self._key_visual = displayio.Group()
-        self._display.show(self._key_visual)
+        self._display.root_group = self._key_visual
 
         self._draw_background()
         self._draw_labels()
@@ -54,3 +54,4 @@ class DisplayLayout:
 
     def refresh(self):
         self._display.refresh()
+
