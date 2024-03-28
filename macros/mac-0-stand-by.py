@@ -4,8 +4,8 @@ from beepad.keymap import NullAction
 
 
 keymap = {   # REQUIRED dictionary - must be named "keymap"
-    'name' : "Empty",   # Keymap name
-    'actions' : [       # List of key actions/macros
+    "name" : "Empty",   # Keymap name
+    "actions" : [       # List of key actions/macros
         #           COLOR       LABEL     KEY SEQUENCE
         # 1st row  ----------
         NullAction(),

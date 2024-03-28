@@ -1,4 +1,4 @@
-# Macros to test the 'LambdaAction' functionality
+# Macros to test the "LambdaAction" functionality
 
 from beepad import BeePad
 from beepad.keymap import LambdaAction
@@ -13,8 +13,8 @@ def hello_name(pad: BeePad):
 
 
 keymap = {   # REQUIRED dictionary - must be named "keymap"
-    'name' : "Lambda",  # Keymap name
-    'actions' : [       # List of key actions/macros
+    "name" : "Lambda",  # Keymap name
+    "actions" : [       # List of key actions/macros
         #           COLOR       LABEL     KEY SEQUENCE
         # 1st row  ----------
         LambdaAction(0x00ff00, "Hello",   hello_world),
