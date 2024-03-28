@@ -25,7 +25,7 @@ from .constants import OLED_HEIGHT, OLED_WIDTH, PIXEL_ORDER, PIXEL_BRIGHTNESS, P
 
 class BeePadBase:
 
-    def __init__(self):
+    def __init__(self) -> None:
 
         self._mouse = None
         self._consumer_control = None
@@ -36,7 +36,7 @@ class BeePadBase:
         self._init_usb_hid()
         self._init_neopixel()
 
-    def _init_display(self):
+    def _init_display(self) -> None:
         displayio.release_displays()
         spi = busio.SPI(board.SCK, board.MOSI)
         display_bus = displayio.FourWire(spi,
@@ -47,12 +47,12 @@ class BeePadBase:
         self.display = SH1106(display_bus, width=OLED_WIDTH, height=OLED_HEIGHT)
         self.display.auto_refresh = False
 
-    def _init_keypad(self):
+    def _init_keypad(self) -> None:
         # Initialize the key with values 'board.KEYn' for 1 <= n <= 12
         key_pins = [getattr(board, "KEY%d" % (key + 1)) for key in range(0, KEYS)]
         self.keys = keypad.Keys(key_pins, value_when_pressed=False, pull=True)
 
-    def _init_encoder(self):
+    def _init_encoder(self) -> None:
         self.encoder = rotaryio.IncrementalEncoder(board.ROTB, board.ROTA)
         self.encoder.position = 0
         self._encoder_switch = digitalio.DigitalInOut(board.ENCODER_SWITCH)
@@ -60,12 +60,12 @@ class BeePadBase:
         self._debounced_switch = Button(self._encoder_switch)
         self._debounced_switch.update()
 
-    def _init_usb_hid(self):
+    def _init_usb_hid(self) -> None:
         self.keyboard = Keyboard(usb_hid.devices)
         self.keyboard_layout = KeyboardLayoutUS(self.keyboard)
         self._consumer_control = ConsumerControl(usb_hid.devices)
 
-    def _init_neopixel(self):
+    def _init_neopixel(self) -> None:
         self.pixels = neopixel.NeoPixel(board.NEOPIXEL, PIXEL_NUM,
                                         brightness=PIXEL_BRIGHTNESS,
                                         auto_write=False,
@@ -86,3 +86,4 @@ class BeePadBase:
         if not self._consumer_control:
             self._consumer_control = ConsumerControl(usb_hid.devices)
         return self._consumer_control
+

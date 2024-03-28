@@ -6,7 +6,7 @@ from .constants import OLED_HEIGHT, OLED_WIDTH, OLED_BORDER, KEYS
 
 class DisplayLayout:
 
-    def __init__(self, display):
+    def __init__(self, display) -> None:
         self._display = display
 
         self._key_visual = displayio.Group()
@@ -15,7 +15,7 @@ class DisplayLayout:
         self._draw_background()
         self._draw_labels()
 
-    def _draw_background(self):
+    def _draw_background(self) -> None:
         """Draw the background"""
         color_bitmap = displayio.Bitmap(OLED_WIDTH, OLED_HEIGHT, 1)
         color_palette = displayio.Palette(1)
@@ -33,7 +33,7 @@ class DisplayLayout:
                                           x=OLED_BORDER + 2, y=OLED_BORDER)
         self._key_visual.append(inner_sprite)
 
-    def _draw_labels(self):
+    def _draw_labels(self) -> None:
         self._name = label.Label(terminalio.FONT, text=" " * 6,
                                  color=0xFFFFFF, x=OLED_WIDTH // 2 - 10, y=10)
         self._key_visual.append(self._name)
@@ -47,11 +47,11 @@ class DisplayLayout:
                 self._key_visual.append(l)
                 self._key_labels.append(l)
 
-    def show_keymap(self, keymap):
+    def show_keymap(self, keymap) -> None:
         self._name.text = keymap.name
         for i in range(0, KEYS):
             self._key_labels[i].text = keymap.actions[i].name
 
-    def refresh(self):
+    def refresh(self) -> None:
         self._display.refresh()
 

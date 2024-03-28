@@ -6,36 +6,36 @@ from .constants import KEYS
 
 class Action:
 
-    def __init__(self, name: str, color: int):
+    def __init__(self, name: str, color: int) -> None:
         self.name = name
         self.color = color
 
-    def press(self, pad: 'BeePad'):
+    def press(self, pad: 'BeePad') -> None:
         pass
 
-    def release(self, pad: 'BeePad'):
+    def release(self, pad: 'BeePad') -> None:
         pass
 
 
 class NullAction(Action):
 
-    def __init__(self):
+    def __init__(self) -> None:
         super(NullAction, self).__init__('', None)
 
-    def press(self, pad: 'BeePad'):
+    def press(self, pad: 'BeePad') -> None:
         pass
 
-    def release(self, pad: 'BeePad'):
+    def release(self, pad: 'BeePad') -> None:
         pass
 
 
 class TypeAction(Action):
 
-    def __init__(self, color: int, name: str, *sequence):
+    def __init__(self, color: int, name: str, *sequence) -> None:
         super(TypeAction, self).__init__(name, color)
         self._sequence = sequence
 
-    def press(self, pad: 'BeePad'):
+    def press(self, pad: 'BeePad') -> None:
         # '_sequence' is an arbitrary-length list, each item is one of:
         #     + Positive integer: key pressed (e.g. Keycode.KEYPAD_MINUS)
         #     + Negative integer: key released (absolute value)
@@ -53,7 +53,7 @@ class TypeAction(Action):
                 elif isinstance(item, str):
                     pad.keyboard_layout.write(item)
 
-    def release(self, pad: 'BeePad'):
+    def release(self, pad: 'BeePad') -> None:
         # Release any still-pressed keys, consumer codes, mouse buttons
         #
         # Keys and mouse buttons are individually released this way (rather
@@ -69,13 +69,13 @@ class TypeAction(Action):
 
 class MouseAction(Action):
 
-    def __init__(self, color: int, name: str, x=None, y=None, buttons=None):
+    def __init__(self, color: int, name: str, x=None, y=None, buttons=None) -> None:
         super(TypeAction, self).__init__(name, color)
         self.x = x
         self.y = y
         self.buttons = buttons
 
-    def press(self, pad: 'BeePad'):
+    def press(self, pad: 'BeePad') -> None:
         if self.x or self.y:
             pad.mouse.move(self.x if self.x else 0,
                            self.y if self.y else 0,
@@ -83,17 +83,18 @@ class MouseAction(Action):
         if self.buttons:
             pad.mouse.click(self.buttons)
 
-    def release(self, pad: 'BeePad'):
+    def release(self, pad: 'BeePad') -> None:
         if self.buttons:
             pad.mouse.release(self.buttons)
 
+
 class ConsumerControlAction(Action):
 
-    def __init__(self, color: int, name: str, *codes):
+    def __init__(self, color: int, name: str, *codes) -> None:
         super(TypeAction, self).__init__(name, color)
         self._codes = codes
 
-    def press(self, pad: 'BeePad'):
+    def press(self, pad: 'BeePad') -> None:
         if self._codes and len(self._codes) != 0:
             for item in self._codes:
                 if isinstance(item, int):
@@ -102,33 +103,33 @@ class ConsumerControlAction(Action):
                 if isinstance(item, float):
                     sleep(item)
 
-    def release(self, pad: 'BeePad'):
+    def release(self, pad: 'BeePad') -> None:
         pad.consumer_control.release()
 
 
 class LambdaAction(Action):
 
-    def __init__(self, color: int, name: str, callable):
+    def __init__(self, color: int, name: str, callable) -> None:
         super(LambdaAction, self).__init__(name, color)
         self.callable = callable
 
-    def press(self, pad: 'BeePad'):
+    def press(self, pad: 'BeePad') -> None:
         self.callable(pad)
 
-    def release(self, pad: 'BeePad'):
+    def release(self, pad: 'BeePad') -> None:
         pass
 
 
 class ResetEncoderAction(Action):
 
-    def __init__(self, color: int, name: str):
+    def __init__(self, color: int, name: str) -> None:
         super(ResetEncoderAction, self).__init__(name, color)
 
-    def press(self, pad: 'BeePad'):
+    def press(self, pad: 'BeePad') -> None:
         sleep(5)
         pad.encoder.position = 0
 
-    def release(self, pad: 'BeePad'):
+    def release(self, pad: 'BeePad') -> None:
         pass
 
 
@@ -136,7 +137,7 @@ class Keymap:
 
     _order = 100
 
-    def __init__(self, name: str=None, order: int=None, actions: 'List[Action]'=[]):
+    def __init__(self, name: str=None, order: int=None, actions: 'List[Action]'=[]) -> None:
 
         Keymap._order += 1
         self.name = name if name else f"? {Keymap._order} ?"
@@ -152,7 +153,7 @@ class Keymap:
             self.actions.append(NullAction())
 
     @staticmethod
-    def load_all(dir):
+    def load_all(dir) -> List(Keymap):
 
         maps = []
 
@@ -174,3 +175,4 @@ class Keymap:
                     traceback.print_exception(error, error, error.__traceback__)
 
         return maps
+

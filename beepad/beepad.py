@@ -29,7 +29,7 @@ class BeePad(BeePadBase):
 
         self.show_key_colors()
 
-    def show_key_colors(self):
+    def show_key_colors(self) -> None:
         slowdown = 10
         for i in range(PIXEL_NUM):
             action = self.current_keymap.actions[i]
@@ -51,13 +51,13 @@ class BeePad(BeePadBase):
         return self._keymaps[self.current_screen]
 
     @current_screen.setter
-    def current_screen(self, val: int):
+    def current_screen(self, val: int) -> None:
         if val != self._current_screen:
             self._current_screen = val
             self.layout.show_keymap(self._keymaps[val])
             self.show_key_colors()
 
-    def buzz(self):
+    def buzz(self) -> None:
         self.tick_count += 1
         self.current_screen = self.encoder.position % len(self._keymaps)
 
