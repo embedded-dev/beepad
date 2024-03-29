@@ -5,6 +5,7 @@ from adafruit_hid.consumer_control_code import ConsumerControlCode
 
 keymap = {   # REQUIRED dictionary - must be named "keymap"
     "name" : "Media",   # Keymap name
+    "priority" : 50,    # Position priority
     "actions" : [       # List of key actions/macros
         #                     COLOR     LABEL    KEY SEQUENCE
         # 1st row ----------

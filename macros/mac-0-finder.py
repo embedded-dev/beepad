@@ -5,6 +5,7 @@ from adafruit_hid.keycode import Keycode
 
 keymap = {   # REQUIRED dictionary - must be named "keymap"
     "name" : "Finder",  # Keymap name
+    "priority" : 100,   # Position priority
     "actions" : [       # List of key actions/macros
         #          COLOR     LABEL        KEY SEQUENCE
         # 1st row  ----------

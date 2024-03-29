@@ -14,6 +14,7 @@ def hello_name(pad: BeePad):
 
 keymap = {   # REQUIRED dictionary - must be named "keymap"
     "name" : "Lambda",  # Keymap name
+    "priority" : 10,    # Position priority
     "actions" : [       # List of key actions/macros
         #           COLOR       LABEL     KEY SEQUENCE
         # 1st row  ----------

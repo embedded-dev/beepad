@@ -135,13 +135,13 @@ class ResetEncoderAction(Action):
 
 class Keymap:
 
-    _order = 100
+    _priority = 0
 
-    def __init__(self, name: str=None, order: int=None, actions: 'List[Action]'=[]) -> None:
+    def __init__(self, name: str=None, priority: int=None, actions: 'List[Action]'=[]) -> None:
 
-        Keymap._order += 1
-        self.name = name if name else f"? {Keymap._order} ?"
-        self.order = order if order else Keymap._order
+        Keymap._priority += 1
+        self.name = name if name else f"? {Keymap._priority} ?"
+        self.priority = priority if priority else Keymap._priority
         self.actions = actions
 
         # Account for any missing keys or encoder button

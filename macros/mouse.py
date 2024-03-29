@@ -6,6 +6,7 @@ from adafruit_hid.Mouse import Mouse
 
 keymap = {   # REQUIRED dictionary - must be named "keymap"
     "name" : "Mouse",   # Keymap name
+    "priority" : 20,    # Position priority
     "actions" : [       # List of key actions/macros
         #           COLOR     LABEL     KEY SEQUENCE
         # 1st row ----------

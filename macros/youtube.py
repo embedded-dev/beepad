@@ -7,8 +7,9 @@ from adafruit_hid.keycode import Keycode # REQUIRED if using Keycode.* values
 
 
 keymap = {   # REQUIRED dictionary - must be named "keymap"
-    "name": "YouTube",  # Keymap name
-    "actions": [        # list of key actions/macros
+    "name" : "YouTube",  # Keymap name
+    "priority" : 80,     # Position priority
+    "actions" : [        # list of key actions/macros
         #          COLOR     LABEL       KEY SEQUENCE
         # 1st row  ----------
         TypeAction(0x020000, "Mute",     "m"),                 # Toggles Mute

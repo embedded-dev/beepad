@@ -21,7 +21,7 @@ class BeePad(BeePadBase):
         loaded = Keymap.load_all('macros')
         if len(loaded) > 0:
             self._keymaps.extend(loaded)
-        self._keymaps.sort(key=lambda m:m.order)
+        self._keymaps.sort(key=lambda m:m.priority, reverse=True)
 
         self.layout = DisplayLayout(self.display)
         self._current_screen: int = 0

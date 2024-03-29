@@ -6,6 +6,7 @@ from adafruit_hid.keycode import Keycode
 
 keymap = {   # REQUIRED dictionary - must be named "keymap"
     "name" : "Keypad",  # Keymap name
+    "priority" : 30,    # Position priority
     "actions" : [       # List of key actions/macros
         #          COLOR     LABEL       KEY SEQUENCE
         # 1st row ----------
@@ -25,6 +26,6 @@ keymap = {   # REQUIRED dictionary - must be named "keymap"
         TypeAction(0x800000, "0",        "0"),
         TypeAction(0x101010, "#",        "#"),
         # Encoder button ---
-        TypeAction(0x000000, ",         Keycode.BACKSPACE)
+        TypeAction(0x000000, "",         Keycode.BACKSPACE)
     ]
 }

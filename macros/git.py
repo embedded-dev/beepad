@@ -3,8 +3,9 @@
 from beepad.keymap import TypeAction, NullAction
 
 keymap = {   # REQUIRED dictionary - must be named "keymap"
-    "name": "Git",      # Keymap name
-    "actions": [        # list of key actions/macros
+    "name" : "Git",      # Keymap name
+    "priority" : 40,     # Position priority
+    "actions" : [        # list of key actions/macros
         #          COLOR     LABEL     KEY SEQUENCE
         # 1st row ----------
         TypeAction(0xff0000, "status", "git status\n"),
