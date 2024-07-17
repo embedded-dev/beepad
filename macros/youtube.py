@@ -1,5 +1,8 @@
 # Macros to control a YouTube Safari on macOS
 #
+# Keyboard shortcuts documented here:
+#      https://support.google.com/youtube/answer/7631406?hl=en
+#
 # There does not appear to be any keyboad commands which can skip the ads.
 
 from beepad.keymap import TypeAction, NullAction
